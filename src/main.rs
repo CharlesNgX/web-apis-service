@@ -1,5 +1,5 @@
 mod models;
-mod reposities;
+mod repositories;
 mod schema;
 
 fn main() {
