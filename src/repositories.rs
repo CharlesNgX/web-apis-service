@@ -1,17 +1,7 @@
 use crate::schema::*;
 use crate::models::*;
-use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use dotenvy::dotenv;
-use std::env;
-
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
-}
-
+use crate::establish_connection;
 pub struct RustaceanRepository { }
 
 impl RustaceanRepository {
@@ -28,16 +18,14 @@ impl RustaceanRepository {
         let conn = &mut establish_connection();
         rustaceans::table
         .find(id)
-        .select(Rustacean::as_select())
-        .get_result(conn)
+        .get_result::<Rustacean>(conn)
     }
 
     pub fn create(new_rustacean: NewRustacean) -> QueryResult<Rustacean> {
         let conn = &mut establish_connection();
         diesel::insert_into(rustaceans::table)
         .values(&new_rustacean)
-        .returning(Rustacean::as_returning())
-        .get_result(conn)
+        .get_result::<Rustacean>(conn)
     }
 
     pub fn save(id: i32, rustacean: Rustacean) -> QueryResult<Rustacean> {
@@ -47,8 +35,7 @@ impl RustaceanRepository {
             rustaceans::email.eq(rustacean.email.to_owned()),
             rustaceans::name.eq(rustacean.name.to_owned()),
         ))
-        .returning(Rustacean::as_returning())
-        .get_result(conn)
+        .get_result::<Rustacean>(conn)
     }
 
     pub fn delete(id: i32) -> QueryResult<usize> {
