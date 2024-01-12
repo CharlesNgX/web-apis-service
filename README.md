@@ -37,5 +37,5 @@ $ ......
 $ docker-compose exec app  diesel migration run
 # 懒人福音，根据schema.rs 生成models.rs 类似于之前用Swift开发中 用json -> model 的工具类似
 $ docker-compose exec app diesel print-schema > src/schema.rs
-$ docker-compose exec app diesel_ext --model > src/models.rs
+$ docker-compose exec app diesel_ext --model > src/models.rs --add-table-name --rust_styled_model_fields --derive 'Insertable'
 ```
