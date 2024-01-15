@@ -16,14 +16,14 @@ services:
     environment:
       - DATABASE_URL=postgres://postgres_dev:postgres_dev@postgres/app_db_dev
       - ROCKET_DATABASES={postgres={url=postgres://postgres_dev:postgres_dev@postgres/app_db_dev}}
+      - HOST=http://127.0.0.1:8000
     volumes: 
-      # When generating schema.rs and models.rs, it is necessary to access the ..:/app directory.
-      # - ..:/app  
-      - postgres_config_dev:/app/config
-      - postgres_data_dev:/app/data
+      - dev_config:/config
+      - dev_data:/data
       - cargo_cache:/usr/local/cargo/registry 
 
 volumes:
+  dev_config:
+  dev_data:
   cargo_cache:
   postgres_data_dev:
-  postgres_config_dev:

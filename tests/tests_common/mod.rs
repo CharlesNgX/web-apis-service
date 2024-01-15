@@ -1,18 +1,12 @@
 use serde_json::{json, Value};
-use lazy_static::lazy_static;
 use std::env;
 
-lazy_static! {
-    static ref HOST: String = {
-        match env::var("HOST") {
-            Ok(v) => v,
-            Err(e) => e.to_string(),
-        }
+pub fn host() -> String {
+    let host = match env::var("HOST") {
+        Ok(v) => { v },
+        Err(e) => { e.to_string() }
     };
-}
-
-pub fn host() -> &'static String {
-    &HOST
+    return host
 }
 
 pub async fn rustacean_create_common(client: &reqwest::Client) -> Value {
@@ -45,10 +39,10 @@ pub async fn rustacean_delete_common(client: &reqwest::Client, id: i32) {
 pub async fn crate_create_common(client: &reqwest::Client) -> Value {
 
     let rustacean = self::rustacean_create_common(&client).await;
-    let id = rustacean["id"].as_i64().expect("No ID found") as i32;
+    let rustaceans_id = rustacean["id"].as_i64().expect("No ID found") as i32;
 
     let new_crates = json!({
-        "rustaceans_id": id,
+        "rustaceans_id": rustaceans_id,
         "name": "Charles",
         "code": "Web apis service",
         "version": "1.0.0",
