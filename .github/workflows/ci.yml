@@ -21,4 +21,5 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     env:
+      HOST: 'http://127.0.0.1:8000'
       ROCKET_DATABASES: '{postgres={url=postgres://postgres:postgres@postgres/app_db}}'
