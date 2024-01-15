@@ -1,40 +1,39 @@
 #[macro_use] extern crate rocket;
+#[macro_use] extern crate rocket_sync_db_pools;
 
 mod models;
 mod repositories;
 mod schema;
 mod rocket_routes;
 
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
-use dotenvy::dotenv;
+use rocket::fairing::AdHoc;
 use rocket::{Rocket, Build};
-use rocket::fairing::{Fairing, Info, Kind};
 use rocket_routes::crates::*;
 use rocket_routes::rustaceans::*;
-use std::env;
 
-pub fn establish_connection() -> PgConnection {
-    dotenv().ok();
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .unwrap_or_else(|e| panic!("Error connecting to {}, {e}", database_url))
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
+#[database("postgres")]
+pub struct DbConn(diesel::PgConnection);
+
+async fn run_migrations(rocket: Rocket<Build>) -> Result<Rocket<Build>, Rocket<Build>>  {
+    const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations");
+    DbConn::get_one(&rocket).await
+        .expect("---- 333 Failed database connection ----")
+        .run(|conn| match conn.run_pending_migrations(MIGRATIONS) {
+            Ok(_) => { },
+            Err(e) => {
+                panic!("faild conn {e:?}");
+            }
+         })
+        .await;
+    Ok(rocket)
 }
 
-#[derive(Default)]
-struct RocketIgnite;
-
-#[async_trait]
-impl Fairing for RocketIgnite {
-    fn info(&self) -> Info {
-        Info {
-            name: "Rocket Ignite",
-            kind: Kind::Ignite | Kind::Response
-        }
-    }
-
-    async fn on_ignite(&self, rocket: Rocket<Build>) -> Result<Rocket<Build>, Rocket<Build>> { 
-        Ok(rocket.mount("/", routes![
+#[rocket::main]
+async fn main() {
+    let _ = rocket::build()
+        .mount("/", routes![
             get_rustaceans,
             view_rustaceans,
             create_rustaceans,
@@ -47,15 +46,8 @@ impl Fairing for RocketIgnite {
             update_crates,
             delete_crates
         ])
-        )
-    }
-}
-
-#[rocket::main]
-async fn main() {
-
-    let _ = rocket::build()
-        .attach(RocketIgnite::default())
+        .attach(DbConn::fairing())
+        .attach(AdHoc::try_on_ignite("Running DB Migrations", run_migrations))
         .launch()
         .await;
 }
