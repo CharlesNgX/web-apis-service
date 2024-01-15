@@ -8,12 +8,14 @@ use serde::{Serialize, Deserialize};
 #[diesel(belongs_to(Rustacean, foreign_key = rustaceans_id))]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Crate {
+    #[serde(skip_deserializing)]
     pub id: i32,
     pub rustaceans_id: i32,
     pub code: String,
     pub name: String,
     pub version: String,
     pub description: Option<String>,
+    #[serde(skip_deserializing)]
     pub created_at: NaiveDateTime,
 }
 
@@ -31,9 +33,11 @@ pub struct NewCrate {
 #[diesel(table_name = rustaceans)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Rustacean {
+    #[serde(skip_deserializing)]
     pub id: i32,
     pub name: String,
     pub email: String,
+    #[serde(skip_deserializing)]
     pub created_at: NaiveDateTime,
 }
 
