@@ -20,3 +20,5 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+    env:
+      ROCKET_DATABASES: '{postgres={url=postgres://postgres:postgres@postgres/app_db}}'
