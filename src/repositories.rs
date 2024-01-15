@@ -5,37 +5,37 @@ pub struct RustaceanRepository { }
 
 impl RustaceanRepository {
 
-    pub fn find_mutilple(conn: &mut PgConnection, limit: i64) -> QueryResult<Vec<Rustacean>> {
+    pub fn find_mutilple(c: &mut PgConnection, limit: i64) -> QueryResult<Vec<Rustacean>> {
         rustaceans::table
         .limit(limit)
         .order(rustaceans::id.desc())
-        .load(conn)
+        .load(c)
     }
 
-    pub fn find(conn: &mut PgConnection, id: i32) -> QueryResult<Rustacean> {
+    pub fn find(c: &mut PgConnection, id: i32) -> QueryResult<Rustacean> {
         rustaceans::table
         .find(id)
-        .get_result::<Rustacean>(conn)
+        .get_result::<Rustacean>(c)
     }
 
-    pub fn create(conn: &mut PgConnection, new_rustacean: NewRustacean) -> QueryResult<Rustacean> {
+    pub fn create(c: &mut PgConnection, new_rustacean: NewRustacean) -> QueryResult<Rustacean> {
         diesel::insert_into(rustaceans::table)
         .values(&new_rustacean)
-        .get_result::<Rustacean>(conn)
+        .get_result::<Rustacean>(c)
     }
 
-    pub fn save(conn: &mut PgConnection, id: i32, rustacean: Rustacean) -> QueryResult<Rustacean> {
+    pub fn save(c: &mut PgConnection, id: i32, rustacean: Rustacean) -> QueryResult<Rustacean> {
         diesel::update(rustaceans::table.find(id))
         .set((
             rustaceans::email.eq(rustacean.email.to_owned()),
             rustaceans::name.eq(rustacean.name.to_owned()),
         ))
-        .get_result::<Rustacean>(conn)
+        .get_result::<Rustacean>(c)
     }
 
-    pub fn delete(conn: &mut PgConnection, id: i32) -> QueryResult<usize> {
+    pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize> {
         diesel::delete(rustaceans::table.find(id))
-        .execute(conn)
+        .execute(c)
     }
 
 }
@@ -44,11 +44,11 @@ pub struct CrateReposity { }
 
 impl CrateReposity {
 
-    pub fn find_mutilple(conn: &mut PgConnection, limit: i64) -> QueryResult<Vec<Crate>> {
+    pub fn find_mutilple(c: &mut PgConnection, limit: i64) -> QueryResult<Vec<Crate>> {
         crates::table
             .limit(limit)
             .order(crates::id.desc())
-            .load::<Crate>(conn)
+            .load::<Crate>(c)
     }
 
     pub fn find(conn: &mut PgConnection, id: i32) -> QueryResult<Crate> {
@@ -57,13 +57,13 @@ impl CrateReposity {
             .get_result::<Crate>(conn)
     }
 
-    pub fn create(conn: &mut PgConnection, new_crate: NewCrate) -> QueryResult<Crate> {
+    pub fn create(c: &mut PgConnection, new_crate: NewCrate) -> QueryResult<Crate> {
         diesel::insert_into(crates::table)
             .values(&new_crate)
-            .get_result::<Crate>(conn)
+            .get_result::<Crate>(c)
     }
 
-    pub fn save(conn: &mut PgConnection, id: i32, a_crate: Crate) -> QueryResult<Crate> {
+    pub fn save(c: &mut PgConnection, id: i32, a_crate: Crate) -> QueryResult<Crate> {
         diesel::update(crates::table.find(id))
             .set((
                 crates::code.eq(a_crate.code.to_owned()),
@@ -72,13 +72,13 @@ impl CrateReposity {
                 crates::description.eq(a_crate.description.to_owned()),
                 crates::rustaceans_id.eq(a_crate.rustaceans_id.to_owned()),
             ))
-            .get_result::<Crate>(conn)
+            .get_result::<Crate>(c)
     }
 
-    pub fn delete(conn: &mut PgConnection, id: i32) -> QueryResult<usize> {
+    pub fn delete(c: &mut PgConnection, id: i32) -> QueryResult<usize> {
         diesel::delete(crates::table
             .find(id))
-            .execute(conn)
+            .execute(c)
     }
 
 }

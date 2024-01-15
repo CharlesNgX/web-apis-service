@@ -7,42 +7,41 @@ use rocket::serde::json::{json, Json, Value};
 use rocket::http::Status;
 use rocket::response::status::Custom;
 
+use super::server_error;
+
 #[get("/crates")]
-pub async fn get_crates(db: DbConn) -> Result<Value, Value> {
+pub async fn get_crates(db: DbConn) -> Result<Value, Custom<Value>> {
     db.run(|c| {
         repositories::CrateReposity::find_mutilple(c, 100)
             .map(|crates| json!(crates) )
-            .map_err(|e| json!(e.to_string()))
+            .map_err(|e| server_error(&e.into()) )
     }).await
 }
 
 #[get("/crates/<id>")]
-pub async fn view_crates(db: DbConn, id: i32) -> Result<Value, Value> {
+pub async fn view_crates(db: DbConn, id: i32) -> Result<Value, Custom<Value>> {
     db.run(move |c| {
         repositories::CrateReposity::find(c, id)
             .map(|a_crate| json!(a_crate) )
-            .map_err(|e| json!(e.to_string()))
+            .map_err(|e| server_error(&e.into()) )
     }).await
 }
 
 #[post("/crates", format = "json", data = "<new_crate>")]
-pub async fn create_crates(db: DbConn, new_crate: Json<NewCrate>) -> Result<Value, Value> {
+pub async fn create_crates(db: DbConn, new_crate: Json<NewCrate>) -> Result<Value, Custom<Value>> {
     db.run(|c| {
         repositories::CrateReposity::create(c, new_crate.into_inner())
             .map(|a_crate| json!(a_crate) )
-            .map_err(|e| json!(e.to_string()))
+            .map_err(|e| server_error(&e.into()) )
     }).await
 }
 
 #[put("/crates/<id>", format = "json", data = "<a_crate>")]
-pub async fn update_crates(db: DbConn, id: i32, a_crate: Json<Crate>) -> Result<Value, Value> {
+pub async fn update_crates(db: DbConn, id: i32, a_crate: Json<Crate>) -> Result<Value, Custom<Value>> {
     db.run(move |c| {
         repositories::CrateReposity::save(c, id, a_crate.into_inner())
             .map(|a_crate| json!(a_crate) )
-            .map_err(|e| {
-                error!("{:?}", e.to_string());
-                json!(e.to_string())
-            })
+            .map_err(|e| server_error(&e.into()) )
     }).await
 }
 
