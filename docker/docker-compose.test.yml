@@ -1,0 +1,27 @@
+version: '3.3'
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres_test
+      - POSTGRES_PASSWORD=postgres_test
+      - POSTGRES_DB=app_db_test
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data
+
+  app:
+    build: 
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://postgres_test:postgres_test@postgres/app_db_test
+      - ROCKET_DATABASES={postgres={url=postgres://postgres_test:postgres_test@postgres/app_db_test}}
+      - HOST=http://127.0.0.1:8000
+    volumes: 
+      - test_config:/config  
+      - test_data:/data
+
+volumes:
+  test_config:
+  test_data:
+  postgres_data_test:

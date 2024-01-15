@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=app_db
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+
+  app:
+    build:  
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres/app_db
+      - ROCKET_DATABASES={postgres={url=postgres://postgres:postgres@postgres/app_db}}
+    volumes: 
+      # When generating schema.rs and models.rs, it is necessary to access the ..:/app directory.
+      # - ..:/app 
+      - prod_data:/app/data
+      - postgres_config_prod:/app/config
+      - postgres_data_prod:/app/data
+
+volumes:
+  prod_data:
+  postgres_data_prod:
+  postgres_config_prod:

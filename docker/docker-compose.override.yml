@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres_dev
+      - POSTGRES_PASSWORD=postgres_dev
+      - POSTGRES_DB=app_db_dev
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+
+  app:
+    build:  
+      context: ..
+      dockerfile: docker/Dockerfile
+    environment:
+      - DATABASE_URL=postgres://postgres_dev:postgres_dev@postgres/app_db_dev
+      - ROCKET_DATABASES={postgres={url=postgres://postgres_dev:postgres_dev@postgres/app_db_dev}}
+    volumes: 
+      # When generating schema.rs and models.rs, it is necessary to access the ..:/app directory.
+      # - ..:/app  
+      - postgres_config_dev:/app/config
+      - postgres_data_dev:/app/data
+      - cargo_cache:/usr/local/cargo/registry 
+
+volumes:
+  cargo_cache:
+  postgres_data_dev:
+  postgres_config_dev:
