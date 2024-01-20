@@ -1,25 +1,25 @@
-mod tests_common;
+mod common;
 
 #[cfg(test)]
 mod tests {
     
     use reqwest::Client;
     use serde_json::{json, Value};
-    use crate::tests_common;
+    use crate::common;
 
     #[tokio::test]
     async fn test_create_rustaceans() {
         let client = Client::new();
-        let rustacean: Value = tests_common::rustacean_create_common(&client).await;
+        let rustacean: Value = common::rustacean_create_common(&client).await;
         let id = rustacean["id"].as_i64().expect("No ID found") as i32;
-        tests_common::rustacean_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, id).await;
     }
 
     #[tokio::test]
     async fn test_get_rustaceans() {
         let client = Client::new();
         let response = client
-            .get(&format!("{}/rustaceans", tests_common::host()))
+            .get(&format!("{}/rustaceans", common::host()))
             .send()
             .await
             .expect("Failed to retrieve rustaceans");
@@ -31,11 +31,11 @@ mod tests {
     #[tokio::test]
     async fn test_view_rustaceans() {
         let client = Client::new();
-        let rustacean = tests_common::rustacean_create_common(&client).await;
+        let rustacean = common::rustacean_create_common(&client).await;
         let id = rustacean["id"].as_i64().expect("No ID found") as i32;
 
         let view_response = client
-            .get(&format!("{}/rustaceans/{}", tests_common::host(), id))
+            .get(&format!("{}/rustaceans/{}", common::host(), id))
             .send()
             .await
             .expect("Failed to view rustacean");
@@ -45,13 +45,13 @@ mod tests {
         let viewed_rustacean: Value = view_response.json().await.expect("Invalid response");
         assert_eq!(viewed_rustacean["id"].as_i64().expect("No ID found") as i32, id);
 
-        tests_common::rustacean_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, id).await;
     }
 
     #[tokio::test]
     async fn test_update_rustaceans() {
         let client = Client::new();
-        let rustacean = tests_common::rustacean_create_common(&client).await;
+        let rustacean = common::rustacean_create_common(&client).await;
         let id = rustacean["id"].as_i64().expect("No ID found") as i32;
 
         let updated_rustacean = json!({
@@ -62,7 +62,7 @@ mod tests {
         });
 
         let update_response = client
-            .put(&format!("{}/rustaceans/{}", tests_common::host(), id))
+            .put(&format!("{}/rustaceans/{}", common::host(), id))
             .json(&updated_rustacean)
             .send()
             .await
@@ -70,7 +70,7 @@ mod tests {
 
         assert!(update_response.status().is_success());
 
-        tests_common::rustacean_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, id).await;
     }
 
     #[tokio::test]
@@ -83,7 +83,7 @@ mod tests {
         });
 
         let create_response = client
-            .post(&format!("{}/rustaceans", tests_common::host()))
+            .post(&format!("{}/rustaceans", common::host()))
             .json(&new_rustacean)
             .send()
             .await
@@ -93,7 +93,7 @@ mod tests {
         let id = rustacean["id"].as_i64().expect("No ID found") as i32;
 
         let delete_response = client
-            .delete(&format!("{}/rustaceans/{}", tests_common::host(), id))
+            .delete(&format!("{}/rustaceans/{}", common::host(), id))
             .send()
             .await
             .expect("Failed to delete rustacean");

@@ -1,26 +1,26 @@
-mod tests_common;
+mod common;
 
 #[cfg(test)]
 mod tests {
     
     use reqwest::Client;
     use serde_json::{json, Value};
-    use crate::tests_common;
+    use crate::common;
 
     #[tokio::test]
     async fn test_create_crates() {
         let client = Client::new();
-        let rustacean = tests_common::crate_create_common(&client).await;
+        let rustacean = common::crate_create_common(&client).await;
         let id = rustacean["id"].as_i64().expect("No ID found") as i32;
-        tests_common::crate_delete_common(&client, id).await;
-        tests_common::rustacean_delete_common(&client, id).await;
+        common::crate_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, id).await;
     }
 
     #[tokio::test]
     async fn test_get_crates() {
         let client = Client::new();
         let response = client
-            .get(&format!("{}/crates", tests_common::host()))
+            .get(&format!("{}/crates", common::host()))
             .send()
             .await
             .expect("Failed to retrieve rustaceans");
@@ -32,12 +32,12 @@ mod tests {
     #[tokio::test]
     async fn test_view_crates() {
         let client = Client::new();
-        let a_crate = tests_common::crate_create_common(&client).await;
+        let a_crate = common::crate_create_common(&client).await;
         let id = a_crate["id"].as_i64().expect("No ID found") as i32;
         let rustaceans_id = a_crate["rustaceans_id"].as_i64().expect("No ID found") as i32;
 
         let view_response = client
-            .get(&format!("{}/crates/{}", tests_common::host(), id))
+            .get(&format!("{}/crates/{}", common::host(), id))
             .send()
             .await
             .expect("Failed to view rustacean");
@@ -47,14 +47,14 @@ mod tests {
         let viewed_crates: Value = view_response.json().await.expect("Invalid response");
         assert_eq!(viewed_crates["id"].as_i64().expect("No ID found") as i32, id);
 
-        tests_common::crate_delete_common(&client, id).await;
-        tests_common::rustacean_delete_common(&client, rustaceans_id).await;
+        common::crate_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, rustaceans_id).await;
     }
 
     #[tokio::test]
     async fn test_update_crates() {
         let client = Client::new();
-        let a_crate = tests_common::crate_create_common(&client).await;
+        let a_crate = common::crate_create_common(&client).await;
         let id = a_crate["id"].as_i64().expect("No ID found") as i32;
         let rustaceans_id = a_crate["rustaceans_id"].as_i64().expect("No ID found") as i32;
 
@@ -69,7 +69,7 @@ mod tests {
         });
 
         let update_response = client
-            .put(&format!("{}/crates/{}", tests_common::host(), id))
+            .put(&format!("{}/crates/{}", common::host(), id))
             .json(&update_crate)
             .send()
             .await
@@ -77,8 +77,8 @@ mod tests {
 
         assert!(update_response.status().is_success());
 
-        tests_common::crate_delete_common(&client, id).await;
-        tests_common::rustacean_delete_common(&client, rustaceans_id).await;
+        common::crate_delete_common(&client, id).await;
+        common::rustacean_delete_common(&client, rustaceans_id).await;
     }
 
     #[tokio::test]
@@ -91,7 +91,7 @@ mod tests {
         });
     
         let response = client
-            .post(&format!("{}/rustaceans", tests_common::host()))
+            .post(&format!("{}/rustaceans", common::host()))
             .json(&new_rustacean)
             .send()
             .await
@@ -110,7 +110,7 @@ mod tests {
         });
     
         let response = client
-            .post(&format!("{}/crates", tests_common::host()))
+            .post(&format!("{}/crates", common::host()))
             .json(&new_crates)
             .send()
             .await
@@ -121,7 +121,7 @@ mod tests {
         let id = a_crate["id"].as_i64().expect("No ID found") as i32;
 
         let delete_response = client
-            .delete(&format!("{}/crates/{}", tests_common::host(), id))
+            .delete(&format!("{}/crates/{}", common::host(), id))
             .send()
             .await
             .expect("Failed to delete rustacean");
@@ -129,7 +129,7 @@ mod tests {
         assert!(delete_response.status().is_success());
 
         let delete_response = client
-            .delete(&format!("{}/rustaceans/{}", tests_common::host(), rustaceans_id))
+            .delete(&format!("{}/rustaceans/{}", common::host(), rustaceans_id))
             .send()
             .await
             .expect("Failed to delete rustacean");

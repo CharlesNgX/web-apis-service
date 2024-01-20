@@ -68,3 +68,24 @@ pub async fn crate_delete_common(client: &reqwest::Client, id: i32) {
         .await
         .expect("Failed to clean up test rustacean");
 }
+
+pub async fn user_create_common(client: &reqwest::Client) -> Value {
+
+    let new_user = json!({
+        "user": {
+            "password": "12345",
+            "username": "Test_Admin",
+        },
+        "role_code": "admin"
+    });
+
+    let response = client
+        .post(&format!("{}/users", self::host()))
+        .json(&new_user)
+        .send()
+        .await
+        .expect("Failed to create rustacean");
+    assert!(response.status().is_success());
+
+    response.json().await.expect("Invalid response")
+}
