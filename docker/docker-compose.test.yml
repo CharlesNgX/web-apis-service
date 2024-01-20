@@ -15,7 +15,11 @@ services:
       dockerfile: docker/Dockerfile
     environment:
       - DATABASE_URL=postgres://postgres_test:postgres_test@postgres/app_db_test
-      - ROCKET_DATABASES={postgres={url=postgres://postgres_test:postgres_test@postgres/app_db_test}}
+      - |
+        ROCKET_DATABASES={
+          postgres={url=postgres://postgres_test:postgres_test@postgres/app_db_test},
+          redis={url=redis://redis:6379}
+        }
       - HOST=http://127.0.0.1:8000
     volumes: 
       - test_config:/config  
