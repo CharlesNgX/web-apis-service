@@ -1,0 +1,102 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'web-apis-service'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=web-apis-service",
+                    "--package=web-apis-service"
+                ],
+                "filter": {
+                    "name": "web-apis-service",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'web-apis-service'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=web-apis-service",
+                    "--package=web-apis-service"
+                ],
+                "filter": {
+                    "name": "web-apis-service",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'crates'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=crates",
+                    "--package=web-apis-service"
+                ],
+                "filter": {
+                    "name": "crates",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'rustaceans'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=rustaceans",
+                    "--package=web-apis-service"
+                ],
+                "filter": {
+                    "name": "rustaceans",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'authorization'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=authorization",
+                    "--package=web-apis-service"
+                ],
+                "filter": {
+                    "name": "authorization",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
