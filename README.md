@@ -1,6 +1,7 @@
 # web-apis-service
-搭建一个稳定的web api服务
+搭建一个基础的web api服务
 
+- **项目架构**: Rocket + Diesel + Postgres + Redis + Authorization + Serde + Docker + Argon2 + Tera + Lettre
 
 ## Docker
 ```
