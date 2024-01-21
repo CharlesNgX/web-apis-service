@@ -15,7 +15,6 @@ pub async fn rustacean_create_common(client: &reqwest::Client) -> Value {
         "name": "Test33 Rustacean",
         "email": "test11@example.com",
     });
-
     let response = client
         .post(&format!("{}/rustaceans", self::host()))
         .json(&new_rustacean)
@@ -35,7 +34,6 @@ pub async fn rustacean_delete_common(client: &reqwest::Client, id: i32) {
         .expect("Failed to clean up test rustacean");
 }
 
-#[allow(dead_code)]
 pub async fn crate_create_common(client: &reqwest::Client) -> Value {
 
     let rustacean = self::rustacean_create_common(&client).await;
@@ -60,7 +58,6 @@ pub async fn crate_create_common(client: &reqwest::Client) -> Value {
     response.json().await.expect("Invalid response")
 }
 
-#[allow(dead_code)]
 pub async fn crate_delete_common(client: &reqwest::Client, id: i32) {
     let _ = client
         .delete(&format!("{}/crates/{}", self::host(), id))
