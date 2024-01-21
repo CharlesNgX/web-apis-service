@@ -13,6 +13,11 @@ use rocket::Request;
 use rocket_db_pools::Connection;
 use rocket_db_pools::deadpool_redis::redis::AsyncCommands;
 use serde_json::{Value, json};
+use tera::Tera;
+
+pub fn load_template_engine() -> Result<Tera, tera::Error> {
+    Tera::new("templates/**/*.html")
+}
 
 #[derive(rocket_db_pools::Database)]
 #[database("postgres")]
@@ -26,7 +31,7 @@ fn server_error(e: &Box<dyn Error> ) -> Custom<Value> {
     log::error!("{}", e);
     Custom(Status::InternalServerError, json!("Something went wrong"))
 }
-
+ 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for User {
     

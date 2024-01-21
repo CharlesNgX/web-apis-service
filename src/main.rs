@@ -1,5 +1,6 @@
 #[macro_use] extern crate rocket;
 
+mod mail;
 mod auth;
 mod models;
 mod repositories;
