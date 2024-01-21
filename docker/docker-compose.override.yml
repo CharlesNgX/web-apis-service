@@ -21,6 +21,9 @@ services:
           redis={url=redis://redis:6379}
         }
       - HOST=http://127.0.0.1:8000
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_USERNAME=charles.ng.x@gmail.com
+      - SMTP_PASSWORD=your_google_app_password
     volumes: 
       - dev_config:/config
       - dev_data:/data
